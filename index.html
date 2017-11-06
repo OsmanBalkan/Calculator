@@ -1,0 +1,220 @@
+<html>
+<head>
+	<title>FreeJacaScriptCalcuator</title>
+	<link href="https://fonts.googleapis.com/css?family=Cardo:400,400italic|Radley|Tangerine" rel="stylesheet">
+	<style>
+		body{
+			background-color: #dddddd;
+		}
+		.calculator{
+			width:330px;
+			height: 400px;
+			background-color: #ffffff;
+			border-top-left-radius: 80% 20px;
+			border-top-right-radius:80% 20px;
+			border-bottom-left-radius:80% 20px;
+			border-bottom-right-radius: 80% 20px;
+			box-shadow: -4px 4px  3px #777,4px 4px 3px #777;
+		}
+		.board{
+			background-color: lightgray;
+			height: 40px;
+			margin: 10px;
+			border-radius: 3px;
+			border-style: inset;
+			text-align: right;
+			font-family: sans-serif;
+			font-size: 36px;
+			display:block;
+		}
+		.col{
+			float: left;
+			margin-right: 30px;
+		}
+		.row{
+			 float:left;
+			 width:72%;
+		}
+		button{
+			border-top-left-radius: 80% 5px;
+			border-top-right-radius: 80% 5px;
+			border-bottom-left-radius: 80% 5px;
+			border-bottom-right-radius: 80% 5px;
+			width:45px;
+			height: 40px;
+			border:1px solid #4B4657;
+			border-style: outset;
+			box-shadow: 2px 2px 2px #222 , -2px 2px 2px #222,2px -2px 1px #222;
+			color: #fff;
+			background-image: linear-gradient(to bottom, #4B4657, #332f3b);
+			font-size: 24px;
+			margin-left: 17px;
+			text-align: center;
+			margin-top:10px;
+		}
+		.specialButton{
+			background-image: linear-gradient(to bottom, #ff4657, #ff2f3b);
+		}
+		.specialButton:hover{
+			background-image: linear-gradient(to top, #db4657,#db2f3b);
+		}
+		button:hover{
+			background-color: #111;
+			background-image: linear-gradient(to top, #4b3333,#333333);
+		}
+		.brand{
+			font-family:Tangerine;
+			font-weight: bold;
+			font-size: 30px;
+			color: SlateBlue;
+		}
+		.brandlow{
+			font-family:Radley;
+			font-weight: bold;
+			font-size: 30px;
+			color:MediumSeaGreen;
+		}
+	</style>
+</head>
+<body>
+	<center>
+		<div class = 'calculator' >
+			<center><div class ="brand">FreeCalculator</div></center>
+			<center><div class="brandlow">Electronic Calculator</div></center>
+			<div class = board id= board></div>
+			<div class = row>
+				<div>
+					<button class = "specialButton">AC</button>
+					<button class = 'specialButton'>CE</button>
+					<button>%</button>
+				</div>
+				<div>
+					<button>1</button>
+					<button>2</button>
+					<button>3</button>
+				</div>
+				<div>
+					<button>4</button>
+					<button>5</button>
+					<button>6</button>
+				</div>
+				<div>
+					<button>7</button>
+					<button>8</button>
+					<button>9</button>
+				</div>
+				<div>
+					<button>0</button>
+					<button>.</button>
+					<button>=</button>
+				</div>
+			</div>
+			<div class="col">
+				<button>/</button><br>
+				<button>*</button><br>
+				<button>-</button><br>
+				<button style="height: 90px">+</button>
+			</div>
+		</div>
+	</center>
+</body>
+</html>
+<script type="text/javascript">
+		var buttons = document.getElementsByTagName('button');
+		var dot = 0;
+		var currentString='';
+		var currentResult=0;
+		var currentValue = 0;
+		var decimalPart = 0;
+		var operator = '';
+		var board = document.getElementById('board');
+		var isNumberClicked = false;
+		for(i = 0;i<buttons.length;i++)
+		{
+			buttons[i].addEventListener('click',function(){
+			calculate(this.textContent);
+			});
+		}
+		function calculate(val){
+			if(val == "AC"){
+				dot = 0;
+				currentString= '';
+				currentValue = 0;
+				currentResult = 0;
+				board.textContent = '';
+				decimalPart = 0;
+				isNumberClicked = false;
+				return;
+			}
+			if(val=='CE'){
+				currentString='';
+				board.textContent='';
+				iaNumberClicked = false;
+				currentValue = 0;
+			}
+			if(board.textContent=="Error!"){
+				return;
+			}
+			if(board.textContent.length>14){
+				board.textContent= "Error!";
+				return;
+			}
+			if((val>='0' && val<='9'  ) || val=='.'){
+				if(operator=='') currentResult = 0;
+				if(val=='.'){
+					if(dot==1){
+						return;
+					}else{
+						dot = 1;
+						currentString +=val;
+						board.textContent = currentString;
+						return;
+					}
+				}else{
+					if(currentString=='0') return
+				}
+				isNumberClicked = true;
+				currentValue = currentValue*10+Number(val[0]-'0');
+				decimalPart+=dot;
+				currentString+=val;
+				board.textContent = currentString;
+				return;
+			}
+			if(val=='+' || val=='-' || val=='/' || val=='*' || val=='%' ||val=='='){
+				currentValue/=Math.pow(10,decimalPart);
+				decimalPart = 0;
+				dot = 0;
+				if(isNumberClicked){
+					switch(operator){
+						case '':
+							currentResult += currentValue;
+							break;
+						case '+':
+								currentResult+=currentValue;
+						  break;
+						case '/':
+						 if(isNumberClicked){
+							 currentResult/=currentValue;
+						 }
+						  break;
+						case '-':
+						  currentResult-=currentValue;
+							break;
+						case '*':
+							if(isNumberClicked)
+								currentResult*=currentValue;
+							break;
+						case '%':
+							currentResult =Math.floor(currentResult) % Math.floor(currentValue);
+					}
+			}
+				currentValue = 0;
+				currentString='';
+				operator = val;
+				if(val=='=') operator = '';
+				board.textContent = currentResult.toString().substr(0,13);
+			}
+			isNumberClicked = false;
+			return;
+		}
+	</script>
